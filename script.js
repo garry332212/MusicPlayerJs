@@ -1,182 +1,201 @@
-let previous = document.querySelector('#pre');
-let play = document.querySelector('#play');
-let next = document.querySelector('#next');
-let title = document.querySelector('#title');
-let recent_volume = document.querySelector('#volume');
-let volume_show = document.querySelector('#volume_show');
-let slider = document.querySelector('#duration_slider');
-let show_duration = document.querySelector('#show_duration');
-let track_image = document.querySelector('#track_image');
-let auto_play = document.querySelector('#auto');
-let present = document.querySelector('#present');
-let total = document.querySelector('#total');
-let artist = document.querySelector('#artist');
-
+let previous = document.querySelector("#pre");
+let play = document.querySelector("#play");
+let next = document.querySelector("#next");
+let title = document.querySelector("#title");
+let recent_volume = document.querySelector("#volume");
+let volume_show = document.querySelector("#volume_show");
+let slider = document.querySelector("#duration_slider");
+let show_duration = document.querySelector("#show_duration");
+let track_image = document.querySelector("#track_image");
+// let auto_play = document.querySelector('#auto');
+let present = document.querySelector("#present");
+let total = document.querySelector("#total");
+let artist = document.querySelector("#artist");
 
 let timer;
-let autoplay = 0;
+let autoplay = 1;
 
 let index_no = 0;
 let Playing_song = false;
 
 //create a audio Element
-let track = document.createElement('audio');
-
+let track = document.createElement("audio");
 
 //All songs list
-let All_song = [{
-		name: "295(੨੯੫) ",
-		path: "./music/295.mp3",
-		img: "./images/295.jpeg",
-		singer: "Late Sidhu Moosewala"
-	},
-	{
-		name: "Chauffeur",
-		path: "./music/Chauffeur.mp3",
-		img: "./images/chauffer.jpg",
-		singer: "Diljit Dosanj, Tory Lanez"
-	},
-	{
-		name: "Freestyle",
-		path: "./music/Freestyle.mp3",
-		img: "./images/freestyle.jpg",
-		singer: "Jordan Sandhu"
-	}
-];
+let All_song = [
+  {
+    name: "295(੨੯੫) ",
+    path: "./music/295.mp3",
+    img: "./images/295.jpeg",
+    singer: "Late Sidhu Moosewala",
+  },
 
+  {
+    name: "Nothing Lasts",
+    path: "./music/Nothing Lasts.mp3",
+    img: "./images/notinglasyt.jpg",
+    singer: "Karan Aujla",
+  },
+  {
+    name: "Tell Me God Why",
+    path: "./music/Tell Me God Why.mp3",
+    img: "./images/tell me god why.jpg",
+    singer: "Deep Chahal",
+  },
+  {
+    name: "Chauffeur",
+    path: "./music/Chauffeur.mp3",
+    img: "./images/chauffer.jpg",
+    singer: "Diljit Dosanj, Tory Lanez",
+  },
+  {
+    name: "Freestyle",
+    path: "./music/Freestyle.mp3",
+    img: "./images/freestyle.jpg",
+    singer: "Jordan Sandhu",
+  },
+];
 
 // All functions
 
-
 // function load the track
+// function load_track(index_no) {
+// 	clearInterval(timer);
+// 	reset_slider();
+
+// 	track.src = All_song[index_no].path;
+// 	title.innerHTML = All_song[index_no].name;
+// 	track_image.src = All_song[index_no].img;
+// 	artist.innerHTML = All_song[index_no].singer;
+// 	track.load();
+
+// 	timer = setInterval(range_slider, 1000);
+// 	total.innerHTML = All_song.length;
+// 	present.innerHTML = index_no + 1;
+// }
 function load_track(index_no) {
-	clearInterval(timer);
-	reset_slider();
+  clearInterval(timer);
+  reset_slider();
 
-	track.src = All_song[index_no].path;
-	title.innerHTML = All_song[index_no].name;
-	track_image.src = All_song[index_no].img;
-	artist.innerHTML = All_song[index_no].singer;
-	track.load();
+  // Check if All_song[index_no] is defined before accessing its properties
+  if (All_song[index_no]) {
+    track.src = All_song[index_no].path;
+    title.innerHTML = All_song[index_no].name;
+    track_image.src = All_song[index_no].img;
+    artist.innerHTML = All_song[index_no].singer;
+    track.load();
 
-	timer = setInterval(range_slider, 1000);
-	total.innerHTML = All_song.length;
-	present.innerHTML = index_no + 1;
+    timer = setInterval(range_slider, 1000);
+    total.innerHTML = All_song.length;
+    present.innerHTML = index_no + 1;
+  } else {
+    console.error("No song found at index: " + index_no);
+  }
 }
 
 load_track(index_no);
 
-
 //mute sound function
 function mute_sound() {
-	track.volume = 0;
-	volume.value = 0;
-	volume_show.innerHTML = 0;
+  track.volume = 0;
+  volume.value = 0;
+  volume_show.innerHTML = 0;
 }
-
+function unmute_sound() {
+  track.volume = recent_volume / 100;
+  volume.value = 0;
+  volume_show.innerHTML = 0;
+}
 
 // checking.. the song is playing or not
 function justplay() {
-	if (Playing_song == false) {
-		playsong();
-
-	} else {
-		pausesong();
-	}
+  if (Playing_song == false) {
+    playsong();
+    track_image.classList.add("spin-logo");
+  } else {
+    pausesong();
+    track_image.classList.remove("spin-logo");
+  }
 }
-
 
 // reset song slider
 function reset_slider() {
-	slider.value = 0;
+  slider.value = 0;
 }
 
 // play song
 function playsong() {
-	track.play();
-	Playing_song = true;
-	play.innerHTML = '<i class="fa fa-pause" aria-hidden="true"></i>';
+  track.play();
+  Playing_song = true;
+  play.innerHTML = '<i class="fa fa-pause" aria-hidden="true"></i>';
 }
 
 //pause song
 function pausesong() {
-	track.pause();
-	Playing_song = false;
-	play.innerHTML = '<i class="fa fa-play" aria-hidden="true"></i>';
+  track.pause();
+  Playing_song = false;
+  play.innerHTML = '<i class="fa fa-play" aria-hidden="true"></i>';
 }
-
 
 // next song
 function next_song() {
-	if (index_no < All_song.length - 1) {
-		index_no += 1;
-		load_track(index_no);
-		playsong();
-	} else {
-		index_no = 0;
-		load_track(index_no);
-		playsong();
-
-	}
+  if (index_no < All_song.length - 1) {
+    index_no += 1;
+    load_track(index_no);
+    playsong();
+    track_image.classList.add("spin-logo");
+  } else {
+    index_no = 0;
+    load_track(index_no);
+    playsong();
+  }
 }
-
 
 // previous song
 function previous_song() {
-	if (index_no > 0) {
-		index_no -= 1;
-		load_track(index_no);
-		playsong();
-
-	} else {
-		index_no = All_song.length;
-		load_track(index_no);
-		playsong();
-	}
+  if (index_no > 0) {
+    index_no -= 1;
+    load_track(index_no);
+    playsong();
+    track_image.classList.add("spin-logo");
+  } else {
+    index_no = All_song.length;
+    load_track(index_no);
+    playsong();
+  }
 }
-
 
 // change volume
 function volume_change() {
-	volume_show.innerHTML = recent_volume.value;
-	track.volume = recent_volume.value / 100;
+  volume_show.innerHTML = recent_volume.value;
+  track.volume = recent_volume.value / 100;
 }
 
-// change slider position 
+// change slider position
 function change_duration() {
-	slider_position = track.duration * (slider.value / 100);
-	track.currentTime = slider_position;
+  slider_position = track.duration * (slider.value / 100);
+  track.currentTime = slider_position;
 }
-
-// autoplay function
-function autoplay_switch() {
-	if (autoplay == 1) {
-		autoplay = 0;
-		auto_play.style.background = "rgba(255,255,255,0.2)";
-	} else {
-		autoplay = 1;
-		auto_play.style.background = "#FF8A65";
-	}
-}
-
 
 function range_slider() {
-	let position = 0;
+  let position = 0;
 
-	// update slider position
-	if (!isNaN(track.duration)) {
-		position = track.currentTime * (100 / track.duration);
-		slider.value = position;
-	}
+  // update slider position
+  if (!isNaN(track.duration)) {
+    position = track.currentTime * (100 / track.duration);
+    slider.value = position;
+  }
 
+  // function will run when the song is over
+  if (track.ended) {
+    play.innerHTML = '<i class="fa fa-play" aria-hidden="true"></i>';
+    track_image.classList.remove("spin-logo");
 
-	// function will run when the song is over
-	if (track.ended) {
-		play.innerHTML = '<i class="fa fa-play" aria-hidden="true"></i>';
-		if (autoplay == 1) {
-			index_no += 1;
-			load_track(index_no);
-			playsong();
-		}
-	}
+    if (autoplay == 1) {
+      index_no += 1;
+      load_track(index_no);
+      track_image.classList.add("spin-logo");
+      playsong();
+    }
+  }
 }
